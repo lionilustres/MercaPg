@@ -5,10 +5,11 @@ exports.handler = async (event, context) => {
     // Verifica si la variable de entorno está disponible
     console.log("Access Token:", process.env.MERCADO_PAGO_ACCESS_TOKEN);
 
-    // Configura Mercado Pago con el Access Token
-    mercadopago.configurations.setAccessToken(process.env.MERCADO_PAGO_ACCESS_TOKEN);
+    mercadopago.configure({
+  access_token: process.env.MERCADO_PAGO_ACCESS_TOKEN,
+});
+console.log("Mercado Pago SDK:", mercadopago);
 
-    console.log("Mercado Pago configurado correctamente.");
 
     // Obtiene los datos del pago del body de la solicitud
     const { body } = event;
