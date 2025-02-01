@@ -1,6 +1,6 @@
 [build]
   command = ""  # No necesitas un comando de build si solo tienes funciones
-  publish = "netlify" #  Crea una carpeta "public" vacía (o con un index.html sencillo si quieres)
+  publish = "public" #  Crea una carpeta "public" vacía (o con un index.html sencillo si quieres)
 
 [functions]
   directory = "netlify/functions"
