@@ -1,6 +1,6 @@
 [build]
   command = ""  # No necesitas un comando de build si solo tienes funciones
-  publish = "public" #  Crea una carpeta "public" vacía (o con un index.html sencillo si quieres)
+  publish = "netlify" #  Crea una carpeta "public" vacía (o con un index.html sencillo si quieres)
 
 [functions]
   directory = "netlify/functions"
@@ -10,5 +10,5 @@
   [headers.values]
     Access-Control-Allow-Origin = "*" # ¡CUIDADO! Cambia esto en producción
     Access-Control-Allow-Methods = "GET, POST, OPTIONS"
-    Access-Control-Allow-Headers = "Content-Type, x-worker-secret"
+    Access-Control-Allow-Headers = "Content-Type"
     Access-Control-Max-Age = "3600"
