@@ -1,42 +1,23 @@
-const mercadopago = require("mercadopago");
+const mercadopago = require('mercadopago');
 
-exports.handler = async (event, context) => {
-  try {
-    // Verifica si la variable de entorno está disponible
-    const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN;
-    console.log("Access Token:", accessToken);
+// Configuración con access_token
+mercadopago.configurations.setAccessToken(process.env.MERCADO_PAGO_ACCESS_TOKEN);
 
-    if (!accessToken) {
-      throw new Error("El Access Token no está configurado en las variables de entorno.");
-    }
-
-    // Configura Mercado Pago correctamente para versiones recientes
-    mercadopago.configurations.setAccessToken(accessToken);
-
-    console.log("Mercado Pago configurado correctamente.");
-
-    // Obtiene los datos del pago del body de la solicitud
-    const { body } = event;
-    const paymentData = JSON.parse(body);
-
-    console.log("Datos de pago recibidos:", paymentData);
-
-    // Crea el pago con Mercado Pago
-    const payment = await mercadopago.payment.create(paymentData);
-
-    console.log("Respuesta de Mercado Pago:", payment);
-
-    // Devuelve la respuesta de Mercado Pago al cliente
-    return {
-      statusCode: 200,
-      body: JSON.stringify(payment.response),
-    };
-  } catch (error) {
-    console.error("Error en la función de Mercado Pago:", error);
-
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: error.message, details: error }),
-    };
+// Crear el pago (usando PSE, por ejemplo)
+const paymentData = {
+  transaction_amount: 100,
+  token: 'token_de_pago',  // Este token debe ser generado en el front-end
+  description: 'Test Payment',
+  installments: 1,
+  payment_method_id: 'pse',
+  payer: {
+    email: 'payer@example.com'
   }
 };
+
+// Crear el pago con Mercado Pago
+mercadopago.payment.save(paymentData).then(function(response) {
+  console.log('Respuesta de Mercado Pago:', response);
+}).catch(function(error) {
+  console.error('Error al procesar el pago:', error);
+});
