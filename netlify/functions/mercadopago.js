@@ -1,5 +1,6 @@
 // netlify/functions/mercadopago.js
-const mercadopago = require('mercadopago');
+const mercadopago = require('mercadopago') || {};
+
 
 exports.handler = async function(event, context) {
     // Verifica que se haya proporcionado el token de Mercado Pago
