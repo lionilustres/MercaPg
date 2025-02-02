@@ -1,4 +1,4 @@
-const MercadoPago = require('mercadopago/lib/mercadoPago'); 
+const MercadoPago = require('mercadopago'); 
 const axios = require('axios');
 
 exports.handler = async (event, context) => {
