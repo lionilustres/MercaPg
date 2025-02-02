@@ -1,48 +1,33 @@
-import * as mercadopago from 'mercadopago';
+const mercadopago = require('mercadopago'); 
+require('dotenv').config();
 
-export const handler = async (event, context) => {
-  try {
-    // Configura Mercado Pago con tu access token.
-    // ¡Recuerda que este token debe estar en las variables de entorno de Netlify!
-    mercadopago.configure({
-      access_token: process.env.MERCADO_PAGO_ACCESS_TOKEN,
-    });
-
+exports.handler = async function (event, context) {
     try {
-        // Crear la preferencia de pago
+        mercadopago.configure({
+            access_token: process.env.MERCADO_PAGO_ACCESS_TOKEN
+        });
+
         const preference = {
             items: [
                 {
-                    title: 'Mi Producto',
+                    title: 'Producto de prueba',
                     quantity: 1,
                     currency_id: 'ARS',
                     unit_price: 100
                 }
-            ],
-            back_urls: {
-                success: 'https://tusitio.com/success',
-                failure: 'https://tusitio.com/failure',
-                pending: 'https://tusitio.com/pending'
-            },
-            auto_return: 'approved'
+            ]
         };
 
-        // Crea la preferencia de pago
         const response = await mercadopago.preferences.create(preference);
 
-        // Devuelve la URL de pago generada por Mercado Pago
         return {
             statusCode: 200,
-            body: JSON.stringify({
-                success: true,
-                link: response.body.init_point
-            })
+            body: JSON.stringify({ init_point: response.body.init_point })
         };
     } catch (error) {
-        console.error(error);
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: 'Error al crear la preferencia de pago' })
+            body: JSON.stringify({ error: error.message })
         };
     }
 };
