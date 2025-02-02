@@ -1,18 +1,12 @@
-// netlify/functions/mercadopago.js
-const mercadopago = require('mercadopago') || {};
+import * as mercadopago from 'mercadopago';
 
-
-exports.handler = async function(event, context) {
-    // Verifica que se haya proporcionado el token de Mercado Pago
-    if (!process.env.MERCADO_PAGO_ACCESS_TOKEN) {
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: 'Falta el token de acceso de Mercado Pago' })
-        };
-    }
-
-    // Configura el token de Mercado Pago
-    mercadopago.configurations.setAccessToken(process.env.MERCADO_PAGO_ACCESS_TOKEN);
+export const handler = async (event, context) => {
+  try {
+    // Configura Mercado Pago con tu access token.
+    // ¡Recuerda que este token debe estar en las variables de entorno de Netlify!
+    mercadopago.configure({
+      access_token: process.env.MERCADO_PAGO_ACCESS_TOKEN,
+    });
 
     try {
         // Crear la preferencia de pago
