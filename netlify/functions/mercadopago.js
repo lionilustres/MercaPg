@@ -1,16 +1,15 @@
-const mercadopago = require('mercadopago').default;
+const MercadoPago = require('mercadopago/lib/mercadoPago'); 
 const axios = require('axios');
-
 
 exports.handler = async (event, context) => {
   try {
-    console.log("Función iniciada."); // Mensaje de prueba
+    console.log("Función iniciada.");
 
-        mercadopago.configure({
-            access_token: process.env.MERCADO_PAGO_ACCESS_TOKEN
-        })
+    const mercadopago = new MercadoPago({
+      accessToken: process.env.MERCADO_PAGO_ACCESS_TOKEN
+    });
 
-        console.log("Mercado Pago configurado")
+    console.log("Mercado Pago configurado");
 
     return {
       statusCode: 200,
@@ -23,4 +22,4 @@ exports.handler = async (event, context) => {
       body: JSON.stringify({ error: error.message }),
     };
   }
-}
+};
