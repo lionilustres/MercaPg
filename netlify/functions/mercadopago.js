@@ -1,13 +1,17 @@
-const MercadoPago = require('mercadopago'); 
-const axios = require('axios');
+const mercadopago = require("mercadopago");
 
 exports.handler = async (event, context) => {
   try {
     console.log("Función iniciada.");
 
-    const mercadopago = new MercadoPago({
-      accessToken: process.env.MERCADO_PAGO_ACCESS_TOKEN
-    });
+    // Asegúrate de que la variable de entorno está definida
+    const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN;
+    if (!accessToken) {
+      throw new Error("MERCADO_PAGO_ACCESS_TOKEN no está definido.");
+    }
+
+    // Configuración correcta
+    mercadopago.configurations.setAccessToken(accessToken);
 
     console.log("Mercado Pago configurado");
 
