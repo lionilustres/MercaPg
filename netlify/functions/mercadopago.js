@@ -1,6 +1,6 @@
 const mercadopago = require('mercadopago');
 
-// Configurar MercadoPago con el Access Token
+// Configuración de MercadoPago: asegúrate de que la variable de entorno esté configurada
 mercadopago.configurations.setAccessToken(process.env.MERCADO_PAGO_ACCESS_TOKEN);
 
 exports.handler = async function(event, context) {
