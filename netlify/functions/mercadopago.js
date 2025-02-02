@@ -1,42 +1,61 @@
-const mercadopago = require("mercadopago");
+const mercadopago = require('mercadopago');
 
-exports.handler = async (event, context) => {
-  try {
-    // Verifica si la variable de entorno está disponible
-    const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN;
-    console.log("Access Token:", accessToken);
+// Configurar MercadoPago con el Access Token
+mercadopago.configurations.setAccessToken(process.env.MERCADO_PAGO_ACCESS_TOKEN);
 
-    if (!accessToken) {
-      throw new Error("El Access Token no está configurado en las variables de entorno.");
+exports.handler = async function(event, context) {
+    // Solo permitir solicitudes POST
+    if (event.httpMethod !== 'POST') {
+        return {
+            statusCode: 405,  // Método no permitido
+            body: JSON.stringify({ error: 'Método no permitido' }),
+        };
     }
 
-    // Configuración sin `setAccessToken`, usando la forma moderna
-    mercadopago.configurations.setAccessToken(accessToken);
+    // Asegurarnos de que recibimos los datos del producto
+    const { product } = JSON.parse(event.body);
 
-    console.log("Mercado Pago configurado correctamente.");
+    if (!product || !product.name || !product.quantity || !product.price) {
+        return {
+            statusCode: 400,  // Bad Request
+            body: JSON.stringify({ error: 'Datos del producto faltantes o incorrectos' }),
+        };
+    }
 
-    // Obtiene los datos del pago del body de la solicitud
-    const { body } = event;
-    const paymentData = JSON.parse(body);
-
-    console.log("Datos de pago recibidos:", paymentData);
-
-    // Crea el pago con Mercado Pago
-    const payment = await mercadopago.payment.create(paymentData);
-
-    console.log("Respuesta de Mercado Pago:", payment);
-
-    // Devuelve la respuesta de Mercado Pago al cliente
-    return {
-      statusCode: 200,
-      body: JSON.stringify(payment.response),
+    // Configuración de la preferencia de pago en MercadoPago
+    const preference = {
+        items: [
+            {
+                title: product.name,
+                quantity: product.quantity,
+                currency_id: 'ARS',  // Ajusta la moneda si es necesario
+                unit_price: product.price,
+            },
+        ],
+        back_urls: {
+            success: 'https://tudominio.com/success',
+            failure: 'https://tudominio.com/failure',
+            pending: 'https://tudominio.com/pending',
+        },
+        auto_return: 'approved',
     };
-  } catch (error) {
-    console.error("Error en la función de Mercado Pago:", error);
 
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: error.message, details: error }),
-    };
-  }
+    try {
+        // Crear la preferencia en MercadoPago
+        const response = await mercadopago.preferences.create(preference);
+        
+        // Responder con la URL del pago (init_point)
+        return {
+            statusCode: 200,
+            body: JSON.stringify({ 
+                init_point: response.body.init_point  // URL de pago para MercadoPago
+            }),
+        };
+    } catch (error) {
+        console.error('Error al crear la preferencia:', error);
+        return {
+            statusCode: 500,  // Internal Server Error
+            body: JSON.stringify({ error: 'Error al crear la preferencia de pago' }),
+        };
+    }
 };
