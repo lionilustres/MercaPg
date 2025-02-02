@@ -2,16 +2,18 @@ const mercadopago = require("mercadopago");
 
 exports.handler = async (event, context) => {
   try {
-    // Verifica si la variable de entorno está bien cargada
-    console.log("Access Token:", process.env.MERCADO_PAGO_ACCESS_TOKEN);
+    // Verifica si el Access Token está disponible
+    const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN;
+    console.log("Access Token:", accessToken);
 
-    // Asegúrate de que la variable de entorno no esté vacía
-    if (!process.env.MERCADO_PAGO_ACCESS_TOKEN) {
+    if (!accessToken) {
       throw new Error("El Access Token no está configurado en las variables de entorno.");
     }
 
-    // Asigna el token directamente, ya que configure() no existe en la versión 2.3.0+
-    mercadopago.configurations.setAccessToken(process.env.MERCADO_PAGO_ACCESS_TOKEN);
+    // Inicializa Mercado Pago con el nuevo método correcto
+    mercadopago.configure({
+      access_token: accessToken,
+    });
 
     console.log("Mercado Pago configurado correctamente.");
 
