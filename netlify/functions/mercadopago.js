@@ -1,29 +1,32 @@
-const mercadopago = require("mercadopago");
+const mercadopago = require('mercadopago');
 
 exports.handler = async (event, context) => {
   try {
-    console.log("Función iniciada.");
+    // Configura Mercado Pago (¡SIN usar 'new'!)
+    mercadopago.configure({
+      access_token: process.env.MERCADO_PAGO_ACCESS_TOKEN,
+    });
 
-    // Asegúrate de que la variable de entorno está definida
-    const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN;
-    if (!accessToken) {
-      throw new Error("MERCADO_PAGO_ACCESS_TOKEN no está definido.");
-    }
+    console.log("Mercado Pago configurado.");
 
-    // Configuración correcta
-    mercadopago.configurations.setAccessToken(accessToken);
+    const { body } = event;
+    const paymentData = JSON.parse(body);
 
-    console.log("Mercado Pago configurado");
+    console.log("Datos de pago recibidos:", paymentData);
+
+    const payment = await mercadopago.payments.create(paymentData);
+
+    console.log("Respuesta de Mercado Pago:", payment);
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: "¡Hola desde mi función!" }),
+      body: JSON.stringify(payment),
     };
   } catch (error) {
-    console.error("Error en la función:", error);
+    console.error("Error en la función de Mercado Pago:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: error.message }),
+      body: JSON.stringify({ error: error.message, details: error }),
     };
   }
 };
