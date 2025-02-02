@@ -1,13 +1,15 @@
-const mercadopago = require('mercadopago').default;
+const MercadoPago = require('mercadopago'); 
 const axios = require('axios');
 
 exports.handler = async (event, context) => {
   try {
     console.log("Función iniciada.");
 
-    mercadopago.configurations.setAccessToken(process.env.MERCADO_PAGO_ACCESS_TOKEN);
+    const mercadopago = new MercadoPago({
+      accessToken: process.env.MERCADO_PAGO_ACCESS_TOKEN
+    });
 
-    console.log("Mercado Pago configurado correctamente");
+    console.log("Mercado Pago configurado");
 
     return {
       statusCode: 200,
