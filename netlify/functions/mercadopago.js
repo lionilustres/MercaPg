@@ -1,32 +1,19 @@
-const mercadopago = require('mercadopago');
+const MercadoPago = require('mercadopago'); 
+const axios = require('axios');
 
 exports.handler = async (event, context) => {
-  try {
-    // Configura Mercado Pago (¡SIN usar 'new'!)
+  console.log("Starting Mercado Pago test...");
+  console.log("mercadopago object:", mercadopago); // Log the object itself
+
+  if (mercadopago && mercadopago.configure) { // Check if configure exists
+    console.log("mercadopago.configure function exists!");
     mercadopago.configure({
       access_token: process.env.MERCADO_PAGO_ACCESS_TOKEN,
     });
-
-    console.log("Mercado Pago configurado.");
-
-    const { body } = event;
-    const paymentData = JSON.parse(body);
-
-    console.log("Datos de pago recibidos:", paymentData);
-
-    const payment = await mercadopago.payments.create(paymentData);
-
-    console.log("Respuesta de Mercado Pago:", payment);
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify(payment),
-    };
-  } catch (error) {
-    console.error("Error en la función de Mercado Pago:", error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: error.message, details: error }),
-    };
+    console.log("Mercado Pago configured (hopefully).");
+    return { statusCode: 200, body: "Mercado Pago test successful." };
+  } else {
+    console.log("mercadopago.configure function does NOT exist!");
+    return { statusCode: 500, body: "mercadopago.configure is missing!" };
   }
 };
